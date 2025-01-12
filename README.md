@@ -13,15 +13,12 @@ This project focuses on detecting anomalies in three-phase induction motors usin
 - **Accuracy:** 98.93% on test data.
 - **Robustness:** Effective detection despite data imbalance.
 
-## Features
+## Methodology
 - **FFT-based Feature Extraction:** Fundamental frequencies and Total Harmonic Distortion (THD).
 - **Non-parametric MKDE Model:** Estimates joint probability density functions.
-- **Optimal Thresholds:** Silverman’s rule of thumb for bandwidth selection.
+- **Optimal Thresholds:** Silverman’s rule of thumb for bandwidth selection to ensure robust probability density estimation.
 
 ## Dataset
 - **Source:** [AI Hub](https://aihub.or.kr)
 - **Size:** 11,948 samples (10,000 normal, 1,948 anomalous)
 - **Split:** 50% training, 50% testing
-
-## Paper
-[MKDE_Induction_Motors.pdf](paper/MKDE_Induction_Motors.pdf)

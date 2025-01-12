@@ -1,3 +1,5 @@
+# Outlier Detection in Induction Motors Using MKDE
+
 This repository implements the research from the paper:
 
 **"Outlier Detection Based on Multivariate Kernel Density Estimation in Induction Motors"**  
@@ -20,3 +22,6 @@ This project focuses on detecting anomalies in three-phase induction motors usin
 - **Source:** [AI Hub](https://aihub.or.kr)
 - **Size:** 11,948 samples (10,000 normal, 1,948 anomalous)
 - **Split:** 50% training, 50% testing
+
+## Paper
+[MKDE_Induction_Motors.pdf](paper/MKDE_Induction_Motors.pdf)

@@ -1,0 +1,5 @@
+numpy == 1.16.0
+pandas == 0.24.2
+statsmodels == 0.12.1
+scipy == 1.4.1
+pyarrow == 4.0.1

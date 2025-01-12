@@ -1,9 +1,9 @@
-
 import numpy as np
 from statsmodels.distributions.empirical_distribution import ECDF
 from statsmodels import robust
 from scipy.interpolate import interp1d
 import statkscompute as st
+
 
 def parse_args(yData=None, *varargin):
     temp = np.array(yData)
@@ -16,7 +16,7 @@ def parse_args(yData=None, *varargin):
         print('stats:mvksdensity:NanX')
 
     n, d = temp.shape
-    xi = []
+    xi = np.zeros((0,d))
     xispecified = False
     if len(varargin) != 0:
         if not type(varargin[0]) == np.str:
@@ -92,21 +92,23 @@ def parse_args(yData=None, *varargin):
     if len(extra):
         u, isXChunk = [],[] #internal.stats.parseArgs(['width', 'isXChunk'], [u, isXChunk], extra[:])
 
+    if weight==0:
+        weight = np.ones(n)
+    elif type(weight) == np.dtype('float'):
+        weight = np.tile(weight, (1, n))
+
+
     return yData, n, d, ymin, ymax, xispecified, xi, u, npoints, kernelname, support, weight, cens, cutoff, bdycorr, ftype, plottype, isXChunk
 
 
 def standardize_weight(weight=None, n=None):
-    print(type(weight))
-    if weight==0:
-        weight = np.ones(n)
-    elif type(weight) == np.float:
-        weight = np.tile(weight, (1, n))
-    elif np.prod(weight) != n or np.prod(weight) > len(weight):
-        print('stats:ksdensity:InputSizeMismatchWeight')
-    else:
-        weight = weight.cT
 
-    weight = weight / sum(weight)
+    if len(weight) == 0:
+        weight = np.ones(n)
+    elif type(weight) == np.dtype('float'):
+        weight = np.tile(weight, (1, n))
+
+    weight = weight / np.sum(weight)
 
     return weight
     # -----------------------------
@@ -283,6 +285,29 @@ def mvksdensity(yData=None, *varargin):
 
     ty, ymax, weight, u, foldpoint, maxp = apply_censoring_get_bandwidth(cens, yData, ty, n, ymax, weight, u, d)
 
+    """
+    with gzip.open('data_weight.pickle', 'wb') as f:
+        pickle.dump(weight, f)
+
+    with gzip.open('data_small_u.pickle', 'wb') as f:
+        pickle.dump(u, f)
+
+    with gzip.open('data_L.pickle', 'wb') as f:
+        pickle.dump(L, f)
+
+    with gzip.open('data_big_U.pickle', 'wb') as f:
+        pickle.dump(U, f)
+
+    with gzip.open('data_ty.pickle', 'wb') as f:
+        pickle.dump(ty, f)
+
+
+    np.save("./data_weight.npy", weight)
+    np.save("./data_small_u.npy", u)
+    np.save("./data_L.npy", L)
+    np.save("./data_big_U.npy", U)
+    np.save("./data_ty.npy", ty)"""
+
     fout, xout, u = st.statkscompute(ftype, xi, xispecified, npoints, u, L, U, weight, cutoff, kernelname, ty, yData, foldpoint, maxp, d, isXChunk, bdycorr)
 
 
@@ -296,11 +321,29 @@ def scoring(sel_feature=None, pts=None, pa=None, bw=None):
     indx_noninf = np.where(score != float('inf'))
     indx_inf = np.where(score == float('inf'))
 
-    score_min = np.min(score)
-    score_max = np.max(score)
+    score_min = MinValue(score, indx_noninf[0])
+    score_max = MaxValue(score, indx_noninf[0])
     for i in indx_noninf[0]:
         score_01[i] = (score[i] - score_min) / (score_max - score_min)
     for i in indx_inf[0]:
         score_01[i] = 1
 
     return score_01, f
+
+def MinValue(A,idx):
+    Temp = 0
+    for i in idx:
+        if Temp == 0:
+            Temp = A[i]
+        elif A[i] < Temp:
+            Temp = A[i]
+    return Temp
+
+def MaxValue(A,idx):
+    Temp = 0
+    for i in idx:
+        if Temp == 0:
+            Temp = A[i]
+        elif A[i] > Temp:
+            Temp = A[i]
+    return Temp

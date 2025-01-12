@@ -131,7 +131,7 @@ def compute_pdf_cdf(xi=None, xispecified=None, m=None, L=None, U=None, weight=No
 
 def dokernel(iscdf=None, txi=None, ty=None, u=None, weight=None, kernel=None, cutoff=None, d=None, L=None, U=None, xi=None, bdycorr=None):
     # Now compute density estimate at selected points
-    blocksize = 100 #3e4
+    blocksize = 3e4
     if d == 1:
         m = len(txi)
         n = len(ty)
@@ -312,7 +312,7 @@ def dokernel(iscdf=None, txi=None, ty=None, u=None, weight=None, kernel=None, cu
                 cdfIdx_allBelow =  np.ones((n, 1))
 
                 for j in range(0,d):
-                    dist = []
+                    dist = []#txi[i,j]-ty[:,j]
                     currentIdx = []
                     for k in range(0,len(ty)):
                         dist.append(txi[i][j] -ty[k][j])
@@ -323,7 +323,11 @@ def dokernel(iscdf=None, txi=None, ty=None, u=None, weight=None, kernel=None, cu
                     #dist = txi(i, j) - ty(j)  # txi - ty
 
                     #currentIdx = abs(dist) <= halfwidth(j)
-                    Idx = currentIdx #logical_and(currentIdx, Idx)                # pdf boundary
+                    for q in range(0,n):
+                        if currentIdx[q] == 1 and Idx[q] == 1:
+                            Idx[q] = 1
+                        else:
+                            Idx[q] = 0 # pdf boundary
                     if iscdf:
                         currentCdfIdx = dist >= -halfwidth(j)
                         cdfIdx = currentIdx#logical_and(currentCdfIdx, cdfIdx)                    # cdf boundary1, equal or below the query point in all dimension
@@ -332,6 +336,7 @@ def dokernel(iscdf=None, txi=None, ty=None, u=None, weight=None, kernel=None, cu
 
                 if not iscdf:
                     nearby = [i for i, value in enumerate(Idx) if value == 1]#index(Idx)
+
                 else:
                     nearby = [i for i, value in enumerate(Idx) if value == 1]
                     #nearby = index(logical_and((logical_or(Idx, cdfIdx)), (not cdfIdx_allBelow)))
@@ -356,18 +361,20 @@ def dokernel(iscdf=None, txi=None, ty=None, u=None, weight=None, kernel=None, cu
                         fk = np.array(fk)
                         fk = fk.reshape(fk.shape[0],1)
                         ftemp =ftemp*fk
-                    sum1 = 0
+                    temp = 0
                     weight = np.array(weight)
                     weight = weight.reshape(1,weight.shape[1])
+
+
+                    cnt = 0
                     for l in nearby:
-                        for cnt in range(0,len(ftemp)):
-                            temp = ((weight[0][l]) * (ftemp[cnt]))
-                            sum1 = sum1 + temp[0]
+                        temp = temp + np.sum(np.sum(ftemp[cnt]) * weight[0][l])
+                        cnt = cnt +1
 
-                    f[0][i] = sum1 # weight(nearby) * ftemp
-
-                if iscdf and any(cdfIdx_allBelow):
-                    f[i] = f[i] + sum(weight(cdfIdx_allBelow))
+                    f[0][i] = temp # weight(nearby) * ftemp
+                    print("[Max 8744] Output : No.",i)
+                """if iscdf and any(cdfIdx_allBelow):
+                    f[i] = f[i] + sum(weight(cdfIdx_allBelow))"""
 
     return f.T
 

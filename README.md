@@ -1,5 +1,3 @@
-# Outlier Detection in Induction Motors Using MKDE
-
 This repository implements the research from the paper:
 
 **"Outlier Detection Based on Multivariate Kernel Density Estimation in Induction Motors"**  

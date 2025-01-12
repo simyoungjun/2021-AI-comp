@@ -9,7 +9,12 @@ Authors: Youngjun Sim, Jungyu Choi, Bobae Kim, Sungbin Im
 
 ### Example Data Visualization
 Below are visualizations of normal and anomaly motor data:
-![Anomaly Motor Data](images/anomaly.png)
+<p align="center">
+<img src="images/anomaly.png" alt="Anomaly Motor Data" width="60%">
+</p>
+<p align="center">
+<img src="images/normal.png" alt="Normal Motor Data" width="60%">
+</p>[Anomaly Motor Data](images/anomaly.png)
 ![Normal Motor Data](images/normal.png)
 
 This project focuses on detecting anomalies in three-phase induction motors using **Multivariate Kernel Density Estimation (MKDE)**. It extracts frequency-domain features from motor current signals and applies MKDE to detect outliers without requiring predefined distributions.
@@ -30,11 +35,3 @@ This project focuses on detecting anomalies in three-phase induction motors usin
 - **Size:** 11,948 samples (10,000 normal, 1,948 anomalous)
 - **Split:** 50% training, 50% testing
 
-### Example Data Visualization
-Below are visualizations of normal and anomaly motor data:
-
-#### Anomaly Motor Data
-![Anomaly Motor Data](images/anomaly.png)
-
-#### Normal Motor Data
-![Normal Motor Data](images/normal.png)
